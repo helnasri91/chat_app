@@ -18,8 +18,11 @@
 // Signs-in Friendly Chat.
 function signIn() {
   alert('TODO: Implement Google Sign-In');
-  // TODO 1: Sign in Firebase with credential from the Google user.
-}
+  var provider = new firebase.auth.GoogleAuthProvider();
+  firebase.auth().signInWithPopup(provider)
+};
+
+
 
 // Signs-out of Friendly Chat.
 function signOut() {
@@ -28,7 +31,16 @@ function signOut() {
 
 //Initialize firebase.
 function initFirebase(){
-  // TODO
+  firebase.initializeApp({
+    "apiKey": "AIzaSyBjP88aHFZbEaytxZZdzF7SRZIh2zrju50",
+    "authDomain": "smapchat-d313e.firebaseapp.com",
+    "databaseURL": "smapchat-d313e.firebaseapp.com",
+    "projectId": "smapchat-d313e",
+    "storageBucket": "smapchat-d313e.appspot.com",
+    "messagingSenderId": "722712775526",
+    "appId": "1:722712775526:web:05d3922e7a729b3e0356a7",
+    "measurementId": "G-MJYTXB5E1S"
+  });
 }
 // Initiate firebase auth.
 function initFirebaseAuth() {
@@ -284,18 +296,18 @@ function checkSetup() {
   }
 }
 // Shortcuts to DOM Elements.
-var messageListElement;
-var messageFormElement;
-var messageInputElement;
-var submitButtonElement;
-var imageButtonElement;
-var imageFormElement;
-var mediaCaptureElement;
-var userPicElement;
-var userNameElement;
-var signInButtonElement;
-var signOutButtonElement;
-var signInSnackbarElement;
+var messageListElement = document.getElementById('messages');
+var messageFormElement = document.getElementById('message-form');
+var messageInputElement = document.getElementById('mediaCapture');
+var submitButtonElement = document.getElementById('submit');
+var imageButtonElement = document.getElementById('submitImage');
+var imageFormElement = document.getElementById('image-form');
+var mediaCaptureElement = document.getElementById('mediaCapture');
+var userPicElement = document.getElementById('user-pic');
+var userNameElement = document.getElementById('user-id');
+var signInButtonElement = document.getElementById('sign-in');
+var signOutButtonElement = document.getElementById('sign-out');
+var signInSnackbarElement = document.getElementById('must-signin-snackbar');
 
 // initialize Firebase
 initFirebase();
