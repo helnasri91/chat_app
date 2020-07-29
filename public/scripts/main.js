@@ -68,6 +68,15 @@ function isUserSignedIn() {
 
 // Saves a new message on the Firebase DB.
 function saveMessage(messageText) {
+  return firebase.firestore().collection('messages').add({
+    name: getUserName(),
+    text: messageText,
+    profilePicUrl: getProfilePicUrl(),
+    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+  }).catch(function(error) {
+    console.error('Error writing new message to database', error);
+    });
+  
   // TODO 7: Push a new message to Firebase.
 }
 
@@ -117,12 +126,13 @@ function onMediaFileSelected(event) {
 
 // Triggered when the send new message form is submitted.
 function onMessageFormSubmit(e) {
-  e.preventDefault();
+  e.preventDefault(); // prevents the page from refreshing after data is being sent back to database
   // Check that the user entered a message and is signed in.
   if (messageInputElement.value && checkSignedInWithMessage()) {
-    saveMessage(messageInputElement.value).then(function() {
+    saveMessage(messageInputElement.value).then(function() {  
       // Clear message text field and re-enable the SEND button.
       resetMaterialTextfield(messageInputElement);
+  
       toggleButton();
     });
   }
@@ -319,7 +329,7 @@ initFirebase();
 checkSetup();
 
 // Saves message on form submit.
-messageFormElement.addEventListener('submit', onMessageFormSubmit);
+messageFormElement.addEventListener('submit', onMessageFormSubmit); 
 signOutButtonElement.addEventListener('click', signOut);
 signInButtonElement.addEventListener('click', signIn);
 
