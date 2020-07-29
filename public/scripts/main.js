@@ -49,16 +49,22 @@ function initFirebaseAuth() {
 
 // Returns the signed-in user's profile Pic URL.
 function getProfilePicUrl() {
+  
+  return firebase.auth().currentUser.photoURL || '/images/profile_placeholder.png';
   // TODO 4: Return the user's profile pic URL.
 }
 
 // Returns the signed-in user's display name.
 function getUserName() {
+
+  return firebase.auth().currentUser.displayName;
   // TODO 5: Return the user's display name.
 }
 
 // Returns true if a user is signed-in.
 function isUserSignedIn() {
+
+  return !!firebase.auth().currentUser;
   // TODO 6: Return true if a user is signed-in.
 }
 
@@ -332,6 +338,11 @@ mediaCaptureElement.addEventListener('change', onMediaFileSelected);
 
 // initialize Firebase Auth
 initFirebaseAuth();
+// Initiate Firebase Auth.
+function initFirebaseAuth() {
+  // Listen to auth state changes.
+  firebase.auth().onAuthStateChanged(authStateObserver);
+}
 
 // TODO: Enable Firebase Performance Monitoring.
 
