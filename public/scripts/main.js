@@ -80,25 +80,27 @@ function saveMessage(messageText) {
   // TODO 7: Push a new message to Firebase.
 }
 
-// Loads chat messages history and listens for upcoming ones.
+
 function loadMessages() {
-  // TODO 8: Load and listens for new messages.
+  // Create the query to load the last 12 messages and listen for new ones.
   var query = firebase.firestore()
                   .collection('messages')
-                  .orderby('timestamp','desc')
+                  .orderBy('timestamp', 'desc')
                   .limit(12);
-  //start listening to the query
+  
+  // Start listening to the query.
   query.onSnapshot(function(snapshot) {
     snapshot.docChanges().forEach(function(change) {
       if (change.type === 'removed') {
         deleteMessage(change.doc.id);
       } else {
         var message = change.doc.data();
-        displayMessage(change.doc.id, message.timestamp, message.name, message.text, message.profilePicUrl, message.imageUrl);
+        displayMessage(change.doc.id, message.timestamp, message.name,
+                       message.text, message.profilePicUrl, message.imageUrl);
       }
     });
   });
-  }
+}
 
 // Saves a new message containing an image in Firebase.
 // This first saves the image in Firebase storage.
@@ -127,11 +129,8 @@ function saveImageMessage(file) {
   });
 }
 
-
 // Saves the messaging device token to the datastore.
 function saveMessagingDeviceToken() {
-
-
   firebase.messaging().getToken().then(function(currentToken) {
     if (currentToken) {
       console.log('Got FCM device token:', currentToken);
@@ -147,10 +146,6 @@ function saveMessagingDeviceToken() {
   });
 }
 
-
-  // TODO 10: Save the device token in the realtime datastore
-// Requests permissions to show notifications.
-// Requests permission to show notifications.
 function requestNotificationsPermissions() {
   console.log('Requesting notifications permission...');
   firebase.messaging().requestPermission().then(function() {
