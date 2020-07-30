@@ -17,73 +17,64 @@
 
 // Signs-in Friendly Chat.
 function signIn() {
-  var provider = new firebase.auth.GoogleAuthProvider();
-  firebase.auth().signInWithPopup(provider)
-};
-
-
+    var provider = new firebase.auth.GoogleAuthProvider();
+    firebase.auth().signInWithPopup(provider)
+}
 
 // Signs-out of Friendly Chat.
 function signOut() {
-  // TODO 2: Sign out of Firebase.
-  firebase.auth().signOut();
+    firebase.auth().signOut();
 }
 
 //Initialize firebase.
 function initFirebase(){
-  firebase.initializeApp({
-    "apiKey": "AIzaSyBjP88aHFZbEaytxZZdzF7SRZIh2zrju50",
-    "authDomain": "smapchat-d313e.firebaseapp.com",
-    "databaseURL": "smapchat-d313e.firebaseapp.com",
-    "projectId": "smapchat-d313e",
-    "storageBucket": "smapchat-d313e.appspot.com",
-    "messagingSenderId": "722712775526",
-    "appId": "1:722712775526:web:05d3922e7a729b3e0356a7",
-    "measurementId": "G-MJYTXB5E1S"
-  });
+    firebase.initializeApp({
+        "apiKey": "AIzaSyBjP88aHFZbEaytxZZdzF7SRZIh2zrju50",
+        "authDomain": "smapchat-d313e.firebaseapp.com",
+        "databaseURL": "smapchat-d313e.firebaseapp.com",
+        "projectId": "smapchat-d313e",
+        "storageBucket": "smapchat-d313e.appspot.com",
+        "messagingSenderId": "722712775526",
+        "appId": "1:722712775526:web:05d3922e7a729b3e0356a7",
+        "measurementId": "G-MJYTXB5E1S"
+      });
+  // TODO
 }
 // Initiate firebase auth.
 function initFirebaseAuth() {
-  firebase.auth().onAuthStateChanged(authStateObserver);
-  // TODO 3: Initialize Firebase.
+    firebase.auth().onAuthStateChanged(authStateObserver);
 }
 
 // Returns the signed-in user's profile Pic URL.
 function getProfilePicUrl() {
-  return firebase.auth().currentUser.photoURL || '/images/profile_placeholder.png';
-  // TODO 4: Return the user's profile pic URL.
+    return firebase.auth().currentUser.photoURL || '/images/profile_placeholder.png';
 }
 
 // Returns the signed-in user's display name.
 function getUserName() {
-  return firebase.auth().currentUser.displayName;
-  // TODO 5: Return the user's display name.
+    return firebase.auth().currentUser.displayName;
 }
 
 // Returns true if a user is signed-in.
 function isUserSignedIn() {
-  return !!firebase.auth().currentUser;
-  // TODO 6: Return true if a user is signed-in.
+    return !!firebase.auth().currentUser;
 }
 
 // Saves a new message on the Firebase DB.
 function saveMessage(messageText) {
-  return firebase.firestore().collection('messages').add({
-    name: getUserName(),
-    text: messageText,
-    profilePicUrl: getProfilePicUrl(),
-    timestamp: firebase.firestore.FieldValue.serverTimestamp()
-  }).catch(function(error) {
-    console.error('Error writing new message to database', error);
-    });
-  
-  // TODO 7: Push a new message to Firebase.
+    return firebase.firestore().collection('messages').add({
+        name: getUserName(),
+        text: messageText,
+        profilePicUrl: getProfilePicUrl(),
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      }).catch(function(error) {
+        console.error('Error writing new message to database', error);
+        });
 }
 
-
+// Loads chat messages history and listens for upcoming ones.
 function loadMessages() {
-  // Create the query to load the last 12 messages and listen for new ones.
-  var query = firebase.firestore()
+    var query = firebase.firestore()
                   .collection('messages')
                   .orderBy('timestamp', 'desc')
                   .limit(12);
@@ -105,57 +96,57 @@ function loadMessages() {
 // Saves a new message containing an image in Firebase.
 // This first saves the image in Firebase storage.
 function saveImageMessage(file) {
-  // 1 - We add a message with a loading icon that will get updated with the shared image.
-  firebase.firestore().collection('messages').add({
-    name: getUserName(),
-    imageUrl: LOADING_IMAGE_URL,
-    profilePicUrl: getProfilePicUrl(),
-    timestamp: firebase.firestore.FieldValue.serverTimestamp()
-  }).then(function(messageRef) {
-    // 2 - Upload the image to Cloud Storage.
-    var filePath = firebase.auth().currentUser.uid + '/' + messageRef.id + '/' + file.name;
-    return firebase.storage().ref(filePath).put(file).then(function(fileSnapshot) {
-      // 3 - Generate a public URL for the file.
-      return fileSnapshot.ref.getDownloadURL().then((url) => {
-        // 4 - Update the chat message placeholder with the image's URL.
-        return messageRef.update({
-          imageUrl: url,
-          storageUri: fileSnapshot.metadata.fullPath
+    firebase.firestore().collection('messages').add({
+        name: getUserName(),
+        imageUrl: LOADING_IMAGE_URL,
+        profilePicUrl: getProfilePicUrl(),
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      }).then(function(messageRef) {
+        // 2 - Upload the image to Cloud Storage.
+        var filePath = firebase.auth().currentUser.uid + '/' + messageRef.id + '/' + file.name;
+        return firebase.storage().ref(filePath).put(file).then(function(fileSnapshot) {
+          // 3 - Generate a public URL for the file.
+          return fileSnapshot.ref.getDownloadURL().then((url) => {
+            // 4 - Update the chat message placeholder with the image's URL.
+            return messageRef.update({
+              imageUrl: url,
+              storageUri: fileSnapshot.metadata.fullPath
+            });
+          });
         });
+      }).catch(function(error) {
+        console.error('There was an error uploading a file to Cloud Storage:', error);
       });
-    });
-  }).catch(function(error) {
-    console.error('There was an error uploading a file to Cloud Storage:', error);
-  });
 }
 
 // Saves the messaging device token to the datastore.
 function saveMessagingDeviceToken() {
-  firebase.messaging().getToken().then(function(currentToken) {
-    if (currentToken) {
-      console.log('Got FCM device token:', currentToken);
-      // Saving the Device Token to the datastore.
-      firebase.firestore().collection('fcmTokens').doc(currentToken)
-          .set({uid: firebase.auth().currentUser.uid});
-    } else {
-      // Need to request permissions to show notifications.
-      requestNotificationsPermissions();
-    }
-  }).catch(function(error){
-    console.error('Unable to get messaging token.', error);
-  });
+    firebase.messaging().getToken().then(function(currentToken) {
+        if (currentToken) {
+          console.log('Got FCM device token:', currentToken);
+          // Saving the Device Token to the datastore.
+          firebase.firestore().collection('fcmTokens').doc(currentToken)
+              .set({uid: firebase.auth().currentUser.uid});
+        } else {
+          // Need to request permissions to show notifications.
+          requestNotificationsPermissions();
+        }
+      }).catch(function(error){
+        console.error('Unable to get messaging token.', error);
+      });
 }
 
-// Requests permission to show notifications.
+// Requests permissions to show notifications.
 function requestNotificationsPermissions() {
-  console.log('Requesting notifications permission...');
-  firebase.messaging().requestPermission().then(function() {
-    // Notification permission granted.
-    saveMessagingDeviceToken();
-  }).catch(function(error) {
-    console.error('Unable to get permission to notify.', error);
-  });
+    console.log('Requesting notifications permission...');
+    firebase.messaging().requestPermission().then(function() {
+      // Notification permission granted.
+      saveMessagingDeviceToken();
+    }).catch(function(error) {
+      console.error('Unable to get permission to notify.', error);
+    });
 }
+
 // Triggered when a file is selected via the media picker.
 function onMediaFileSelected(event) {
   event.preventDefault();
@@ -181,8 +172,7 @@ function onMediaFileSelected(event) {
 
 // Triggered when the send new message form is submitted.
 function onMessageFormSubmit(e) {
-  e.preventDefault(); // prevents the page from refreshing after data is being sent back to database
-  // Check that the user entered a message and is signed in.
+  e.preventDefault();
   if (messageInputElement.value && checkSignedInWithMessage()) {
     saveMessage(messageInputElement.value).then(function() {  
       // Clear message text field and re-enable the SEND button.
@@ -365,18 +355,18 @@ function checkSetup() {
   }
 }
 // Shortcuts to DOM Elements.
-var messageListElement = document.getElementById('messages');
-var messageFormElement = document.getElementById('message-form');
-var messageInputElement = document.getElementById('mediaCapture');
-var submitButtonElement = document.getElementById('submit');
-var imageButtonElement = document.getElementById('submitImage');
-var imageFormElement = document.getElementById('image-form');
-var mediaCaptureElement = document.getElementById('mediaCapture');
-var userPicElement = document.getElementById('user-pic');
-var userNameElement = document.getElementById('user-id');
-var signInButtonElement = document.getElementById('sign-in');
-var signOutButtonElement = document.getElementById('sign-out');
-var signInSnackbarElement = document.getElementById('must-signin-snackbar');
+var messageListElement;
+var messageFormElement;
+var messageInputElement;
+var submitButtonElement;
+var imageButtonElement;
+var imageFormElement;
+var mediaCaptureElement;
+var userPicElement;
+var userNameElement;
+var signInButtonElement;
+var signOutButtonElement;
+var signInSnackbarElement;
 
 // initialize Firebase
 initFirebase();
@@ -384,7 +374,7 @@ initFirebase();
 checkSetup();
 
 // Saves message on form submit.
-messageFormElement.addEventListener('submit', onMessageFormSubmit); 
+messageFormElement.addEventListener('submit', onMessageFormSubmit);
 signOutButtonElement.addEventListener('click', signOut);
 signInButtonElement.addEventListener('click', signIn);
 
@@ -401,11 +391,6 @@ mediaCaptureElement.addEventListener('change', onMediaFileSelected);
 
 // initialize Firebase Auth
 initFirebaseAuth();
-// Initiate Firebase Auth.
-function initFirebaseAuth() {
-  // Listen to auth state changes.
-  firebase.auth().onAuthStateChanged(authStateObserver);
-}
 
 // TODO: Enable Firebase Performance Monitoring.
 
