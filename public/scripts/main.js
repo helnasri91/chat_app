@@ -87,6 +87,7 @@ function loadMessages() {
                   .collection('messages')
                   .orderby('timestamp','desc')
                   .limit(12);
+  //start listening to the query
   query.onSnapshot(function(snapshot) {
     snapshot.docChanges().forEach(function(change) {
       if (change.type === 'removed') {
@@ -100,10 +101,6 @@ function loadMessages() {
   }
 
 // Saves a new message containing an image in Firebase.
-// This first saves the image in Firebase storage.
-function saveImageMessage(file) {
-
-  // Saves a new message containing an image in Firebase.
 // This first saves the image in Firebase storage.
 function saveImageMessage(file) {
   // 1 - We add a message with a loading icon that will get updated with the shared image.
@@ -130,8 +127,6 @@ function saveImageMessage(file) {
   });
 }
 
-  // TODO 9: Posts a new image as a message.
-}
 
 // Saves the messaging device token to the datastore.
 function saveMessagingDeviceToken() {
