@@ -33,7 +33,16 @@ function signOut() {
 
 //Initialize firebase.
 function initFirebase(){
-  // TODO
+    firebase.initializeApp({
+        "apiKey": "AIzaSyBjP88aHFZbEaytxZZdzF7SRZIh2zrju50",
+        "authDomain": "smapchat-d313e.firebaseapp.com",
+        "databaseURL": "https://smapchat-d313e.firebaseio.com",
+        "projectId": "smapchat-d313e",
+        "storageBucket": "smapchat-d313e.appspot.com",
+        "messagingSenderId": "722712775526",
+        "appId": "1:722712775526:web:05d3922e7a729b3e0356a7",
+        "measurementId": "G-MJYTXB5E1S"
+      });
 }
 // Initiate firebase auth.
 
