@@ -16,135 +16,76 @@
 'use strict';
 
 // Signs-in Friendly Chat.
+
 function signIn() {
-    var provider = new firebase.auth.GoogleAuthProvider();
-    firebase.auth().signInWithPopup(provider)
+  // Sign into Firebase using popup auth & Google as the identity provider.
+  var provider = new firebase.auth.GoogleAuthProvider();
+  firebase.auth().signInWithPopup(provider);
 }
+
 
 // Signs-out of Friendly Chat.
 function signOut() {
-    firebase.auth().signOut();
+  // Sign out of Firebase.
+  firebase.auth().signOut();
 }
+
 
 //Initialize firebase.
 function initFirebase(){
-    firebase.initializeApp({
-        "apiKey": "AIzaSyBjP88aHFZbEaytxZZdzF7SRZIh2zrju50",
-        "authDomain": "smapchat-d313e.firebaseapp.com",
-        "databaseURL": "smapchat-d313e.firebaseapp.com",
-        "projectId": "smapchat-d313e",
-        "storageBucket": "smapchat-d313e.appspot.com",
-        "messagingSenderId": "722712775526",
-        "appId": "1:722712775526:web:05d3922e7a729b3e0356a7",
-        "measurementId": "G-MJYTXB5E1S"
-      });
   // TODO
 }
 // Initiate firebase auth.
+
+// Initiate Firebase Auth.
 function initFirebaseAuth() {
-    firebase.auth().onAuthStateChanged(authStateObserver);
+  // Listen to auth state changes.
+  firebase.auth().onAuthStateChanged(authStateObserver);
 }
 
 // Returns the signed-in user's profile Pic URL.
+
+// Returns the signed-in user's profile pic URL.
 function getProfilePicUrl() {
-    return firebase.auth().currentUser.photoURL || '/images/profile_placeholder.png';
+  return firebase.auth().currentUser.photoURL || '/images/profile_placeholder.png';
 }
 
 // Returns the signed-in user's display name.
 function getUserName() {
-    return firebase.auth().currentUser.displayName;
+  return firebase.auth().currentUser.displayName;
 }
 
 // Returns true if a user is signed-in.
+
+// Returns true if a user is signed-in.
 function isUserSignedIn() {
-    return !!firebase.auth().currentUser;
+  return !!firebase.auth().currentUser;
 }
 
 // Saves a new message on the Firebase DB.
 function saveMessage(messageText) {
-    return firebase.firestore().collection('messages').add({
-        name: getUserName(),
-        text: messageText,
-        profilePicUrl: getProfilePicUrl(),
-        timestamp: firebase.firestore.FieldValue.serverTimestamp()
-      }).catch(function(error) {
-        console.error('Error writing new message to database', error);
-        });
+  // TODO 7: Push a new message to Firebase.
 }
 
 // Loads chat messages history and listens for upcoming ones.
 function loadMessages() {
-    var query = firebase.firestore()
-                  .collection('messages')
-                  .orderBy('timestamp', 'desc')
-                  .limit(12);
-  
-  // Start listening to the query.
-  query.onSnapshot(function(snapshot) {
-    snapshot.docChanges().forEach(function(change) {
-      if (change.type === 'removed') {
-        deleteMessage(change.doc.id);
-      } else {
-        var message = change.doc.data();
-        displayMessage(change.doc.id, message.timestamp, message.name,
-                       message.text, message.profilePicUrl, message.imageUrl);
-      }
-    });
-  });
+  // TODO 8: Load and listens for new messages.
 }
 
 // Saves a new message containing an image in Firebase.
 // This first saves the image in Firebase storage.
 function saveImageMessage(file) {
-    firebase.firestore().collection('messages').add({
-        name: getUserName(),
-        imageUrl: LOADING_IMAGE_URL,
-        profilePicUrl: getProfilePicUrl(),
-        timestamp: firebase.firestore.FieldValue.serverTimestamp()
-      }).then(function(messageRef) {
-        // 2 - Upload the image to Cloud Storage.
-        var filePath = firebase.auth().currentUser.uid + '/' + messageRef.id + '/' + file.name;
-        return firebase.storage().ref(filePath).put(file).then(function(fileSnapshot) {
-          // 3 - Generate a public URL for the file.
-          return fileSnapshot.ref.getDownloadURL().then((url) => {
-            // 4 - Update the chat message placeholder with the image's URL.
-            return messageRef.update({
-              imageUrl: url,
-              storageUri: fileSnapshot.metadata.fullPath
-            });
-          });
-        });
-      }).catch(function(error) {
-        console.error('There was an error uploading a file to Cloud Storage:', error);
-      });
+  // TODO 9: Posts a new image as a message.
 }
 
 // Saves the messaging device token to the datastore.
 function saveMessagingDeviceToken() {
-    firebase.messaging().getToken().then(function(currentToken) {
-        if (currentToken) {
-          console.log('Got FCM device token:', currentToken);
-          // Saving the Device Token to the datastore.
-          firebase.firestore().collection('fcmTokens').doc(currentToken)
-              .set({uid: firebase.auth().currentUser.uid});
-        } else {
-          // Need to request permissions to show notifications.
-          requestNotificationsPermissions();
-        }
-      }).catch(function(error){
-        console.error('Unable to get messaging token.', error);
-      });
+  // TODO 10: Save the device token in the realtime datastore
 }
 
 // Requests permissions to show notifications.
 function requestNotificationsPermissions() {
-    console.log('Requesting notifications permission...');
-    firebase.messaging().requestPermission().then(function() {
-      // Notification permission granted.
-      saveMessagingDeviceToken();
-    }).catch(function(error) {
-      console.error('Unable to get permission to notify.', error);
-    });
+  // TODO 11: Request permissions to send notifications.
 }
 
 // Triggered when a file is selected via the media picker.
@@ -173,11 +114,11 @@ function onMediaFileSelected(event) {
 // Triggered when the send new message form is submitted.
 function onMessageFormSubmit(e) {
   e.preventDefault();
+  // Check that the user entered a message and is signed in.
   if (messageInputElement.value && checkSignedInWithMessage()) {
-    saveMessage(messageInputElement.value).then(function() {  
+    saveMessage(messageInputElement.value).then(function() {
       // Clear message text field and re-enable the SEND button.
       resetMaterialTextfield(messageInputElement);
-  
       toggleButton();
     });
   }
