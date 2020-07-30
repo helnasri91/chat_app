@@ -148,6 +148,8 @@ function saveMessagingDeviceToken() {
   }
 
 
+  /*Got FCM device token: dR6Zv7DcMZ8LB6qH5dBG-t:APA91bE99JPG_p1c6-8MnHzo14a-sXULXLcoE8kN0TNGWf2EL5BIBajm48NurUcQTpmGhk_pJNCUpa3VmnLzfAQznQOiYrWjHgZNmf8avdOUhibxurvV7ucrqJEpmgAuuA8U7_KKis_4 */
+
   function requestNotificationsPermissions() {
     console.log('Requesting notifications permission...');
     firebase.messaging().requestPermission().then(function() {

@@ -1,0 +1,10 @@
+rules_version = '2'
+{
+  // Add this!
+  "firestore": {
+    "rules": "firestore.rules"
+  },
+  "hosting": {
+    "public": "./public"
+  }
+}
