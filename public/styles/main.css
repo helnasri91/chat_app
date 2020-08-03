@@ -21,6 +21,10 @@ main, #messages-card {
   height: 100%;
   padding-bottom: 0;
 }
+body {
+  background-image: url("/images/nimBG.png");
+}
+
 #messages-card-container {
   height: calc(100% - 35px);
   padding-bottom: 0;
@@ -203,6 +207,3 @@ main, #messages-card {
   background-image:url("nimBG.png") ; 
 }
 
-body {
-  background-image: url("nimBG.png");
-}
