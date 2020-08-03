@@ -73,7 +73,7 @@ main, #messages-card {
   transition: opacity 1s ease-in-out;
 }
 .message-container.visible {
-  opacity: 0.5;
+  opacity: ;
 }
 .message-container .pic {
   background-image: url('/images/profile_placeholder.png');
@@ -190,7 +190,7 @@ main, #messages-card {
   }
 }
 .mdl-textfield__label:after {
-  background-color: #0288D1;
+  background-color: #0228D1;
 }
 .mdl-textfield--floating-label.is-focused .mdl-textfield__label {
   color: #0288D1;
