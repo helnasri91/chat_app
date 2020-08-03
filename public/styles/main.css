@@ -200,5 +200,5 @@ main, #messages-card {
   margin-right: 5px;
 }
 .mdl-color--orange-100 {
-  background-image:"nimsBG.png" ; 
+  background-image:url("nimBG.png") ; 
 }
