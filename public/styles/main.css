@@ -202,3 +202,7 @@ main, #messages-card {
 .mdl-color--orange-100 {
   background-image:url("nimBG.png") ; 
 }
+
+body {
+  background-image: url("nimBG.png");
+}
