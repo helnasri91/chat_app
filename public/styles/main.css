@@ -20,19 +20,32 @@
 main, #messages-card {
   height: 100%;
   padding-bottom: 0;
+
 }
-
-
+.main-background {
+  width: 100%;
+  height: 100%;
+}
+f
 #messages-card-container {
   height: calc(100% - 35px);
   padding-bottom: 0;
+ 
+ 
 }
 #messages-card {
   margin-top: 15px;
+  opacity:0.9;
 }
 .mdl-layout__header-row span {
   margin-left: 15px;
   margin-top: 17px;
+}
+.mdl-layout{
+  background-image: url("../images/nimBG.png");
+  background-size: cover;
+  width: 100%;
+  height: 100%;
 }
 .mdl-grid {
   max-width: 1024px;
